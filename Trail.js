@@ -4,6 +4,7 @@ const UPDATE_COUNT_OF_PARTICLE_COUNT = 1;
 const POSITION_ATTRIBUTE_COUNT = 3;
 const MOUSE_ATTRIBUTE_COUNT = 4;
 const scratchStep = new Cartesian3();
+const scratchSubPosition = new Cartesian3();
 
 class Trail {
     constructor(scene) {
@@ -83,7 +84,7 @@ class Trail {
             if (this._oldPosition) {
                 const step = Cartesian3.multiplyByScalar(diff, i / UPDATE_COUNT_OF_PARTICLE_COUNT, scratchStep);
 
-                subPosition = Cartesian3.add(this._oldPosition, step, position);
+                subPosition = Cartesian3.add(this._oldPosition, step, scratchSubPosition);
             }
 
             this._positions[ci + 0] = position.x;
@@ -165,12 +166,12 @@ class Trail {
         });
 
         const appearance = new Appearance({
-            translucent: false,
+            translucent: true,
             closed: false,
             renderState: {
                 blending: BlendingState.ADDITIVE_BLEND,
-                depthTest: { enabled: true },
-                depthMask: true
+                depthTest: { enabled: false },
+                depthMask: false
             },
             fragmentShaderSource: f_shader(),
             vertexShaderSource: v_shader()
@@ -184,6 +185,10 @@ class Trail {
     }
 
     updatePosition(modelMatrix) {
+        if (modelMatrix.equals(this._modelMatrix)) {
+            return;
+        }
+
         this._update = true;
 
         Matrix4.clone(modelMatrix, this._modelMatrix);
