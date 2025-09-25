@@ -1,6 +1,6 @@
 const { Appearance, BlendingState, BoundingSphere, Cartesian3, Geometry, GeometryInstance, GeometryAttribute, GeometryAttributes, Matrix4, Primitive, PrimitiveType } = Cesium;
 
-const UPDATE_COUNT_OF_PARTICLE_COUNT = 10;
+const UPDATE_COUNT_OF_PARTICLE_COUNT = 1;
 const POSITION_ATTRIBUTE_COUNT = 3;
 const MOUSE_ATTRIBUTE_COUNT = 4;
 const scratchStep = new Cartesian3();

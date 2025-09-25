@@ -158,6 +158,8 @@ Sandcastle.addToolbarMenu(
     "interpolationMenu"
 );
 
+viewer.trackedEntity = planeEntity;
+
 const scene = viewer.scene;
 
 const trail = new Trail(scene);
