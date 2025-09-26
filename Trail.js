@@ -1,4 +1,4 @@
-const { Appearance, BlendingState, BoundingSphere, Cartesian3, Geometry, GeometryInstance, GeometryAttribute, GeometryAttributes, Matrix4, Primitive, PrimitiveType } = Cesium;
+const { Appearance, BlendingState, BoundingSphere, Cartesian3, Geometry, GeometryInstance, GeometryAttribute, GeometryAttributes, Material, Matrix4, Primitive, PrimitiveType } = Cesium;
 
 const UPDATE_COUNT_OF_PARTICLE_COUNT = 1;
 const POSITION_ATTRIBUTE_COUNT = 3;
@@ -137,15 +137,20 @@ class Trail {
     _createPrimitve() {
         function v_shader() {
             return `
+
           in vec3 position3DHigh;
           in vec3 position3DLow;
           in float batchId;
+
+          uniform float u_test; 
           
           void main() {
               vec4 position = czm_modelViewProjectionRelativeToEye *czm_computePosition();
           
               gl_Position = position;
-       
+
+              //  if(u_test > 0.5)
+              // no way to pass uniform into vertex shader
               gl_PointSize = 10.0;
           }`;
         }
@@ -153,9 +158,14 @@ class Trail {
         function f_shader() {
             return `
          
+          uniform float u_test; 
+
           void main() {
-         
-            out_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+
+            if(u_test > 0.5)
+                out_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+            else
+                out_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
           }`;
         }
 
@@ -173,7 +183,14 @@ class Trail {
                 depthTest: { enabled: false },
                 depthMask: false
             },
-            fragmentShaderSource: f_shader(),
+            material: new Material({
+                fabric: {
+                    uniforms: {
+                        u_test: 0.1
+                    },
+                    source: f_shader()
+                }
+            }),
             vertexShaderSource: v_shader()
         });
 
